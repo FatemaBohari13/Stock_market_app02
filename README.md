@@ -37,11 +37,11 @@ This project is a frontend demo/prototype with sample stock data and simulated a
 
 🌐 Live Demo
 
-"https://your-live-demo-link.com"
+"https://fatemabohari13.github.io/Stock_market_app02/"
 
 📂 Repository Link
 
-"https://github.com/your-username/stocknest"
+"https://github.com/FatemaBohari13/Stock_market_app02/"
 
 🎯 Learning Outcomes
 
