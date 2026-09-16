@@ -1,0 +1,1905 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>StockNest</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f8fafc;
+            color: #0f172a;
+        }
+
+        .screen {
+            display: none;
+            min-height: 100vh;
+            padding: 25px;
+            padding-bottom: 80px;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: auto;
+        }
+
+        .logo {
+            width: 70px;
+            height: 70px;
+            background: #2563eb;
+            color: white;
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            margin: auto;
+        }
+
+        h1 {
+            margin-top: 15px;
+        }
+
+        h2 {
+            margin-bottom: 15px;
+        }
+
+        p {
+            color: #64748b;
+            line-height: 1.5;
+        }
+
+        button {
+            cursor: pointer;
+            border: none;
+        }
+
+        .primary {
+            width: 100%;
+            padding: 15px;
+            background: #2563eb;
+            color: white;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: bold;
+            margin-top: 15px;
+        }
+
+        .secondary {
+            padding: 12px 18px;
+            background: #e2e8f0;
+            border-radius: 10px;
+        }
+
+        .back {
+            background: none;
+            color: #2563eb;
+            font-size: 16px;
+            margin-bottom: 25px;
+        }
+
+        input {
+            width: 100%;
+            padding: 14px;
+            margin: 8px 0 15px;
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+            font-size: 15px;
+        }
+
+        .form {
+            max-width: 450px;
+            margin: 40px auto;
+        }
+
+        .form h2 {
+            margin-top: 20px;
+        }
+
+        .center {
+            text-align: center;
+        }
+
+        .link {
+            color: #2563eb;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* HOME */
+
+        .market-grid,
+        .stock-grid,
+        .summary-grid,
+        .stats-grid {
+            display: grid;
+            gap: 15px;
+        }
+
+        .market-grid {
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        .stock-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .summary-grid,
+        .stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .card,
+        .stock-card,
+        .market-card {
+            background: white;
+            padding: 18px;
+            border-radius: 16px;
+            margin-bottom: 15px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.06);
+        }
+
+        .stock-card {
+            cursor: pointer;
+        }
+
+        .stock-logo {
+            width: 42px;
+            height: 42px;
+            background: #eff6ff;
+            color: #2563eb;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .stock-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .price {
+            font-size: 20px;
+            font-weight: bold;
+            margin: 8px 0;
+        }
+
+        .positive {
+            color: #16a34a;
+        }
+
+        .negative {
+            color: #dc2626;
+        }
+
+        .section-title {
+            display: flex;
+            justify-content: space-between;
+            margin: 25px 0 15px;
+        }
+
+        /* STOCK DETAILS */
+
+        .detail {
+            text-align: center;
+        }
+
+        .big-price {
+            font-size: 32px;
+            font-weight: bold;
+            margin: 10px;
+        }
+
+        .periods {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .periods button {
+            padding: 8px 15px;
+            border-radius: 8px;
+            background: #e2e8f0;
+        }
+
+        .periods button.selected {
+            background: #2563eb;
+            color: white;
+        }
+
+        .chart {
+            width: 100%;
+            height: 220px;
+            background: #f8fafc;
+            border-radius: 15px;
+        }
+
+        /* NEWS */
+
+        .featured {
+            background: #0f172a;
+            color: white;
+            padding: 25px;
+            border-radius: 18px;
+            margin-bottom: 25px;
+        }
+
+        .featured p {
+            color: #cbd5e1;
+            margin: 10px 0;
+        }
+
+        .categories {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            margin-bottom: 20px;
+        }
+
+        .category {
+            white-space: nowrap;
+            padding: 9px 15px;
+            background: #e2e8f0;
+            border-radius: 20px;
+        }
+
+        .category.selected {
+            background: #2563eb;
+            color: white;
+        }
+
+
+        /* WATCHLIST */
+
+        .watchlist-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+        }
+
+        .watchlist-stock-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .watchlist-stock-info h3 {
+            margin-bottom: 4px;
+        }
+
+        .watchlist-stock-info p {
+            font-size: 13px;
+        }
+
+        .watchlist-price {
+            text-align: right;
+        }
+
+        .watchlist-price strong {
+            display: block;
+            font-size: 16px;
+        }
+
+        .watchlist-price span {
+            display: block;
+            margin-top: 5px;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .watchlist-info {
+            background: #eff6ff;
+            border-radius: 16px;
+            padding: 18px;
+            margin-top: 20px;
+        }
+
+
+        /* PROFILE & SETTINGS */
+
+        .profile-header {
+            text-align: center;
+            margin: 20px 0 25px;
+        }
+
+        .profile-avatar {
+            width: 85px;
+            height: 85px;
+            margin: 0 auto 12px;
+            border-radius: 50%;
+            background: #eff6ff;
+            color: #2563eb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 38px;
+            font-weight: bold;
+        }
+
+        .profile-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 16px 0;
+            border-bottom: 1px solid #e2e8f0;
+            cursor: pointer;
+        }
+
+        .profile-item:last-child {
+            border-bottom: none;
+        }
+
+        .profile-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            background: #eff6ff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .profile-item div:nth-child(2) {
+            flex: 1;
+        }
+
+        .profile-item p {
+            font-size: 13px;
+            margin-top: 3px;
+        }
+
+        .logout {
+            color: #dc2626;
+        }
+
+        /* SEARCH */
+
+        .search-box {
+            position: relative;
+            margin: 20px 0;
+        }
+
+        .search-box input {
+            margin: 0;
+            padding-left: 45px;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 15px;
+            top: 14px;
+            font-size: 18px;
+        }
+
+        .search-result {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            cursor: pointer;
+        }
+
+        .search-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .search-info h3 {
+            margin-bottom: 4px;
+        }
+
+        .search-info p {
+            font-size: 13px;
+        }
+
+        .search-result-price {
+            text-align: right;
+        }
+
+        .search-result-price strong {
+            display: block;
+            font-size: 16px;
+        }
+
+        .search-result-price span {
+            display: block;
+            margin-top: 5px;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        /* FORGOT PASSWORD */
+.forgot-box {
+    margin-top: 28px;
+}
+.forgot-icon {
+    width: 64px;
+    height: 64px;
+    margin: 0 auto 18px;
+    border-radius: 20px;
+    background: #eff6ff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+}
+.forgot-note {
+    text-align: center;
+    color: #64748b;
+    font-size: 14px;
+    line-height: 1.6;
+    margin: 10px 0 22px;
+}
+
+/* NAVIGATION */
+
+        .bottom {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-around;
+            padding: 10px;
+        }
+
+        .nav {
+            background: none;
+            color: #64748b;
+            font-size: 12px;
+        }
+
+        .nav span {
+            display: block;
+            font-size: 20px;
+            margin-bottom: 3px;
+        }
+
+        .dark-mode {
+            background: #0f172a;
+            color: #f8fafc;
+        }
+
+        .dark-mode .card,
+        .dark-mode .stock-card,
+        .dark-mode .market-card,
+        .dark-mode .bottom {
+            background: #1e293b;
+            color: #f8fafc;
+        }
+
+        .dark-mode p {
+            color: #cbd5e1;
+        }
+
+        .dark-mode .profile-item {
+            border-color: #334155;
+        }
+
+        @media(max-width:650px) {
+            .market-grid,
+            .stock-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+
+<!-- ================= SCREEN 1 ================= -->
+
+<div id="welcome" class="screen active">
+
+    <div style="
+        min-height:90vh;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        text-align:center;
+    ">
+
+        <div style="max-width:500px;">
+
+            <div class="logo">📈</div>
+
+            <h1>StockNest</h1>
+
+            <p style="margin-top:10px;">
+                <b>Your market, all in one place.</b>
+            </p>
+
+            <p style="margin-top:15px;">
+                Track stocks, explore market trends,
+                manage your portfolio and stay updated
+                with financial news.
+            </p>
+
+            <button class="primary" onclick="show('login')">
+                Get Started
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ================= SCREEN 2 ================= -->
+
+<div id="login" class="screen">
+
+    <div class="container">
+
+        <button class="back" onclick="show('welcome')">
+            ← Back
+        </button>
+
+        <div class="form center">
+
+            <div class="logo">📈</div>
+
+            <h2>Welcome Back</h2>
+
+            <p>Login to continue to StockNest.</p>
+
+            <div style="text-align:left;margin-top:25px;">
+
+                <label>Email or Mobile</label>
+                <input id="email" type="text"
+                       placeholder="Enter email or mobile">
+
+                <label>Password</label>
+                <input id="password" type="password"
+                       placeholder="Enter password">
+
+            </div>
+
+            <p style="text-align:right;">
+                <span class="link"
+                      onclick="show('forgot')">
+                    Forgot Password?
+                </span>
+            </p>
+
+            <button class="primary" onclick="login()">
+                Login
+            </button>
+
+            <button class="secondary"
+                    style="width:100%;margin-top:10px;"
+                    onclick="alert('Google Login is a UI concept.')">
+                Continue with Google
+            </button>
+
+            <p style="margin-top:20px;">
+                Don't have an account?
+                <span class="link" onclick="show('signup')">
+                    Sign Up
+                </span>
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ================= SCREEN 3 ================= -->
+
+<div id="signup" class="screen">
+
+    <div class="container">
+
+        <button class="back" onclick="show('login')">
+            ← Back
+        </button>
+
+        <div class="form">
+
+            <div class="logo">📈</div>
+
+            <h2>Create Account</h2>
+
+            <p>Create your StockNest account.</p>
+
+            <label>Full Name</label>
+            <input id="name" type="text"
+                   placeholder="Enter full name">
+
+            <label>Email</label>
+            <input id="signupEmail" type="email"
+                   placeholder="Enter email">
+
+            <label>Password</label>
+            <input id="signupPassword" type="password"
+                   placeholder="Create password">
+
+            <label>Confirm Password</label>
+            <input id="confirm" type="password"
+                   placeholder="Confirm password">
+
+            <button class="primary" onclick="signup()">
+                Create Account
+            </button>
+
+            <p class="center" style="margin-top:20px;">
+                Already have an account?
+                <span class="link" onclick="show('login')">
+                    Login
+                </span>
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ================= SCREEN 4 ================= -->
+
+<div id="home" class="screen">
+
+    <div class="container">
+
+        <p>Hello, Investor 👋</p>
+
+        <h2 style="margin-top:5px;">
+            Market Overview
+        </h2>
+
+        <input placeholder="🔍 Search stocks, companies..."
+               onclick="show('search')">
+
+        <div class="market-grid">
+
+            <div class="market-card">
+                <p>NIFTY 50</p>
+                <div class="price">25,120.45</div>
+                <span class="positive">+0.82%</span>
+            </div>
+
+            <div class="market-card">
+                <p>SENSEX</p>
+                <div class="price">82,365.10</div>
+                <span class="positive">+0.65%</span>
+            </div>
+
+            <div class="market-card">
+                <p>BANK NIFTY</p>
+                <div class="price">55,420.30</div>
+                <span class="negative">-0.24%</span>
+            </div>
+
+        </div>
+
+
+        <div class="section-title">
+            <h2>Trending Stocks</h2>
+        </div>
+
+        <div class="stock-grid">
+
+            <div class="stock-card"
+                 onclick="openStock('Reliance Industries')">
+
+                <div class="stock-top">
+                    <div class="stock-logo">R</div>
+                    <span class="positive">+1.24%</span>
+                </div>
+
+                <h3 style="margin-top:12px;">
+                    Reliance Industries
+                </h3>
+
+                <p>RELIANCE</p>
+
+                <div class="price">₹1,428.50</div>
+
+            </div>
+
+
+            <div class="stock-card"
+                 onclick="openStock('Tata Motors')">
+
+                <div class="stock-top">
+                    <div class="stock-logo">T</div>
+                    <span class="positive">+2.10%</span>
+                </div>
+
+                <h3 style="margin-top:12px;">
+                    Tata Motors
+                </h3>
+
+                <p>TATAMOTORS</p>
+
+                <div class="price">₹982.40</div>
+
+            </div>
+
+
+            <div class="stock-card"
+                 onclick="openStock('Infosys')">
+
+                <div class="stock-top">
+                    <div class="stock-logo">I</div>
+                    <span class="negative">-0.60%</span>
+                </div>
+
+                <h3 style="margin-top:12px;">
+                    Infosys
+                </h3>
+
+                <p>INFY</p>
+
+                <div class="price">₹1,455.80</div>
+
+            </div>
+
+
+            <div class="stock-card"
+                 onclick="openStock('TCS')">
+
+                <div class="stock-top">
+                    <div class="stock-logo">T</div>
+                    <span class="positive">+0.91%</span>
+                </div>
+
+                <h3 style="margin-top:12px;">
+                    TCS
+                </h3>
+
+                <p>TCS</p>
+
+                <div class="price">₹3,912.20</div>
+
+            </div>
+
+        </div>
+
+
+        <div class="section-title">
+
+            <h2>Financial News</h2>
+
+            <span class="link"
+                  onclick="show('news')">
+                View All
+            </span>
+
+        </div>
+
+
+        <div class="card"
+             onclick="show('news')">
+
+            <p>MARKET • 2 hours ago</p>
+
+            <h3 style="margin-top:8px;">
+                Indian markets continue to track
+                global market movements
+            </h3>
+
+        </div>
+
+    </div>
+
+
+    <div class="bottom">
+
+        <button class="nav"
+                onclick="show('home')">
+            <span>🏠</span>Home
+        </button>
+
+        <button class="nav"
+                onclick="show('search')">
+            <span>🔍</span>Search
+        </button>
+
+        <button class="nav"
+                onclick="show('portfolio')">
+            <span>💼</span>Portfolio
+        </button>
+
+        <button class="nav"
+                onclick="show('watchlist')">
+            <span>⭐</span>Watchlist
+        </button>
+
+        <button class="nav"
+                onclick="show('profile')">
+            <span>👤</span>Profile
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- ================= SCREEN 5 ================= -->
+
+<div id="details" class="screen">
+
+    <div class="container">
+
+        <button class="back"
+                onclick="show('home')">
+            ← Back to Home
+        </button>
+
+        <div class="detail">
+
+            <div class="logo" id="stockLogo">
+                R
+            </div>
+
+            <h2 id="stockName"
+                style="margin-top:15px;">
+                Reliance Industries
+            </h2>
+
+            <p id="stockSymbol">
+                RELIANCE
+            </p>
+
+            <div class="big-price"
+                 id="stockPrice">
+                ₹1,428.50
+            </div>
+
+            <span class="positive"
+                  id="stockChange">
+                +₹17.50 (+1.24%)
+            </span>
+
+        </div>
+
+
+        <div class="card" style="margin-top:25px;">
+
+            <div class="periods">
+
+                <button class="selected"
+                        onclick="period(this)">
+                    1D
+                </button>
+
+                <button onclick="period(this)">
+                    1W
+                </button>
+
+                <button onclick="period(this)">
+                    1M
+                </button>
+
+                <button onclick="period(this)">
+                    1Y
+                </button>
+
+            </div>
+
+
+            <svg class="chart"
+                 viewBox="0 0 600 220">
+
+                <polyline
+                    points="0,180 70,150 130,165 190,110 250,130 320,80 390,100 450,60 520,75 600,30"
+                    fill="none"
+                    stroke="#2563eb"
+                    stroke-width="5">
+                </polyline>
+
+            </svg>
+
+        </div>
+
+
+        <h2>Market Statistics</h2>
+
+        <div class="stats-grid">
+
+            <div class="card">
+                <p>Market Cap</p>
+                <h3>₹19.4T</h3>
+            </div>
+
+            <div class="card">
+                <p>Volume</p>
+                <h3>8.4M</h3>
+            </div>
+
+            <div class="card">
+                <p>Day High</p>
+                <h3>₹1,445.20</h3>
+            </div>
+
+            <div class="card">
+                <p>Day Low</p>
+                <h3>₹1,408.10</h3>
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <h3>Trade</h3>
+
+            <button class="primary"
+                    onclick="alert('Buy interface concept')">
+                Buy
+            </button>
+
+            <button class="secondary"
+                    style="width:100%;margin-top:10px;"
+                    onclick="alert('Sell interface concept')">
+                Sell
+            </button>
+
+        </div>
+
+
+        <button class="primary"
+                onclick="show('watchlist')">
+            ⭐ Add to Watchlist
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- ================= SCREEN 6 ================= -->
+
+<div id="portfolio" class="screen">
+
+    <div class="container">
+
+        <button class="back"
+                onclick="show('home')">
+            ← Back to Home
+        </button>
+
+        <h2>My Portfolio</h2>
+
+        <div class="card">
+
+            <p>Total Portfolio Value</p>
+
+            <div style="font-size:32px;font-weight:bold;margin:10px 0;">
+                ₹2,48,750
+            </div>
+
+            <span class="positive">
+                +₹18,450 (+8.02%)
+            </span>
+
+        </div>
+
+
+        <div class="summary-grid">
+
+            <div class="card">
+                <p>Invested Amount</p>
+                <h3>₹2,30,300</h3>
+            </div>
+
+            <div class="card">
+                <p>Current Value</p>
+                <h3>₹2,48,750</h3>
+            </div>
+
+            <div class="card">
+                <p>Total Profit</p>
+                <h3 class="positive">+₹18,450</h3>
+            </div>
+
+            <div class="card">
+                <p>Today's P&L</p>
+                <h3 class="positive">+₹2,180</h3>
+            </div>
+
+        </div>
+
+
+        <h2 style="margin-top:25px;">
+            Asset Allocation
+        </h2>
+
+        <div class="card">
+
+            <div style="
+                height:20px;
+                display:flex;
+                border-radius:20px;
+                overflow:hidden;
+                margin-bottom:15px;
+            ">
+
+                <div style="width:45%;background:#2563eb;"></div>
+                <div style="width:30%;background:#60a5fa;"></div>
+                <div style="width:25%;background:#cbd5e1;"></div>
+
+            </div>
+
+            <p>Stocks — 45%</p>
+            <p>ETFs — 30%</p>
+            <p>Others — 25%</p>
+
+        </div>
+
+
+        <h2>Holdings</h2>
+
+        <div class="card">
+
+            <p><b>Reliance Industries</b> — 20 shares</p>
+            <p class="positive">+₹2,120</p>
+
+            <hr style="margin:15px 0;border:0;border-top:1px solid #e2e8f0;">
+
+            <p><b>Tata Motors</b> — 30 shares</p>
+            <p class="positive">+₹3,250</p>
+
+            <hr style="margin:15px 0;border:0;border-top:1px solid #e2e8f0;">
+
+            <p><b>Infosys</b> — 15 shares</p>
+            <p class="negative">-₹420</p>
+
+            <hr style="margin:15px 0;border:0;border-top:1px solid #e2e8f0;">
+
+            <p><b>TCS</b> — 10 shares</p>
+            <p class="positive">+₹4,180</p>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ================= SCREEN 7 ================= -->
+
+<div id="news" class="screen">
+
+    <div class="container">
+
+        <button class="back"
+                onclick="show('home')">
+            ← Back to Home
+        </button>
+
+        <h2>Market News</h2>
+
+        <p style="margin-bottom:20px;">
+            Stay updated with market developments.
+        </p>
+
+
+        <!-- FEATURED -->
+
+        <div class="featured">
+
+            <p style="color:#93c5fd;">
+                FEATURED • MARKET
+            </p>
+
+            <h2>
+                Global market trends continue to
+                influence investor sentiment
+            </h2>
+
+            <p>
+                Investors are monitoring economic
+                indicators, company updates and
+                international developments.
+            </p>
+
+            <button
+                style="
+                    background:none;
+                    color:#93c5fd;
+                    margin-top:10px;
+                    font-weight:bold;
+                "
+                onclick="alert('This is sample news content.')">
+
+                Read More →
+
+            </button>
+
+        </div>
+
+
+        <!-- CATEGORIES -->
+
+        <div class="categories">
+
+            <button class="category selected"
+                    onclick="category(this)">
+                All
+            </button>
+
+            <button class="category"
+                    onclick="category(this)">
+                Market
+            </button>
+
+            <button class="category"
+                    onclick="category(this)">
+                Stocks
+            </button>
+
+            <button class="category"
+                    onclick="category(this)">
+                Economy
+            </button>
+
+            <button class="category"
+                    onclick="category(this)">
+                Technology
+            </button>
+
+        </div>
+
+
+        <!-- NEWS 1 -->
+
+        <div class="card">
+
+            <p>MARKET • 2 hours ago</p>
+
+            <h3 style="margin-top:8px;">
+                Indian market indices remain active
+                during today's trading session
+            </h3>
+
+            <p style="margin-top:8px;">
+                Investors are monitoring domestic
+                and international market developments.
+            </p>
+
+            <button class="link"
+                    style="margin-top:10px;background:none;"
+                    onclick="alert('Sample market news.')">
+                Read More →
+            </button>
+
+        </div>
+
+
+        <!-- NEWS 2 -->
+
+        <div class="card">
+
+            <p>STOCKS • 4 hours ago</p>
+
+            <h3 style="margin-top:8px;">
+                Large-cap stocks attract attention
+                from market participants
+            </h3>
+
+            <p style="margin-top:8px;">
+                Several major companies remain
+                in focus as investors track prices.
+            </p>
+
+            <button class="link"
+                    style="margin-top:10px;background:none;"
+                    onclick="alert('Sample stock news.')">
+                Read More →
+            </button>
+
+        </div>
+
+
+        <!-- NEWS 3 -->
+
+        <div class="card">
+
+            <p>ECONOMY • 6 hours ago</p>
+
+            <h3 style="margin-top:8px;">
+                Economic indicators remain important
+                for market watchers
+            </h3>
+
+            <p style="margin-top:8px;">
+                Investors continue to follow inflation,
+                interest rates and economic growth data.
+            </p>
+
+            <button class="link"
+                    style="margin-top:10px;background:none;"
+                    onclick="alert('Sample economy news.')">
+                Read More →
+            </button>
+
+        </div>
+
+
+        <!-- NEWS 4 -->
+
+        <div class="card">
+
+            <p>TECHNOLOGY • 8 hours ago</p>
+
+            <h3 style="margin-top:8px;">
+                Technology sector continues to remain
+                an important market segment
+            </h3>
+
+            <p style="margin-top:8px;">
+                Technology companies are being watched
+                for business and growth developments.
+            </p>
+
+            <button class="link"
+                    style="margin-top:10px;background:none;"
+                    onclick="alert('Sample technology news.')">
+                Read More →
+            </button>
+
+        </div>
+
+
+        <div class="card center">
+
+            <h3>More News Coming Soon</h3>
+
+            <p style="margin-top:8px;">
+                This prototype currently uses
+                sample financial news.
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- ================= SCREEN 8 ================= -->
+
+<div id="watchlist" class="screen">
+
+    <div class="container">
+
+        <button class="back"
+                onclick="show('home')">
+            ← Back to Home
+        </button>
+
+        <h2>My Watchlist</h2>
+
+        <p style="margin-bottom:20px;">
+            Track your favorite stocks in one place.
+        </p>
+
+        <!-- STOCK 1 -->
+        <div class="stock-card"
+             onclick="openStock('Reliance Industries')">
+
+            <div class="watchlist-row">
+
+                <div class="watchlist-stock-left">
+                    <div class="stock-logo">R</div>
+
+                    <div class="watchlist-stock-info">
+                        <h3>Reliance Industries</h3>
+                        <p>RELIANCE</p>
+                    </div>
+                </div>
+
+                <div class="watchlist-price">
+                    <strong>₹1,428.50</strong>
+                    <span class="positive">+1.24%</span>
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- STOCK 2 -->
+        <div class="stock-card"
+             onclick="openStock('Tata Motors')">
+
+            <div class="watchlist-row">
+
+                <div class="watchlist-stock-left">
+                    <div class="stock-logo">T</div>
+
+                    <div class="watchlist-stock-info">
+                        <h3>Tata Motors</h3>
+                        <p>TATAMOTORS</p>
+                    </div>
+                </div>
+
+                <div class="watchlist-price">
+                    <strong>₹982.40</strong>
+                    <span class="positive">+2.10%</span>
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- STOCK 3 -->
+        <div class="stock-card"
+             onclick="openStock('Infosys')">
+
+            <div class="watchlist-row">
+
+                <div class="watchlist-stock-left">
+                    <div class="stock-logo">I</div>
+
+                    <div class="watchlist-stock-info">
+                        <h3>Infosys</h3>
+                        <p>INFY</p>
+                    </div>
+                </div>
+
+                <div class="watchlist-price">
+                    <strong>₹1,455.80</strong>
+                    <span class="negative">-0.60%</span>
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- STOCK 4 -->
+        <div class="stock-card"
+             onclick="openStock('TCS')">
+
+            <div class="watchlist-row">
+
+                <div class="watchlist-stock-left">
+                    <div class="stock-logo">T</div>
+
+                    <div class="watchlist-stock-info">
+                        <h3>TCS</h3>
+                        <p>TCS</p>
+                    </div>
+                </div>
+
+                <div class="watchlist-price">
+                    <strong>₹3,912.20</strong>
+                    <span class="positive">+0.91%</span>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="watchlist-info">
+            <h3>⭐ Your Watchlist</h3>
+            <p style="margin-top:8px;">
+                Select any stock to view its detailed price,
+                performance and market statistics.
+            </p>
+        </div>
+
+    </div>
+
+    <!-- WATCHLIST BOTTOM NAV -->
+
+    <div class="bottom">
+
+        <button class="nav"
+                onclick="show('home')">
+            <span>🏠</span>Home
+        </button>
+
+        <button class="nav"
+                onclick="show('search')">
+            <span>🔍</span>Search
+        </button>
+
+        <button class="nav"
+                onclick="show('portfolio')">
+            <span>💼</span>Portfolio
+        </button>
+
+        <button class="nav"
+                onclick="show('watchlist')">
+            <span>⭐</span>Watchlist
+        </button>
+
+        <button class="nav"
+                onclick="show('profile')">
+            <span>👤</span>Profile
+        </button>
+
+    </div>
+
+</div>
+
+
+
+<!-- ================= SCREEN 9 ================= -->
+
+<div id="profile" class="screen">
+
+    <div class="container">
+
+        <button class="back" onclick="show('home')">
+            ← Back to Home
+        </button>
+
+        <div class="profile-header">
+            <div class="profile-avatar">F</div>
+            <h2>Fatema</h2>
+            <p>StockNest User</p>
+        </div>
+
+        <div class="card">
+            <div class="profile-item">
+                <div class="profile-icon">✏️</div>
+                <div>
+                    <h3>Edit Profile</h3>
+                    <p>Update your personal information</p>
+                </div>
+                <span>›</span>
+            </div>
+
+            <div class="profile-item" onclick="alert('Notification settings')">
+                <div class="profile-icon">🔔</div>
+                <div>
+                    <h3>Notifications</h3>
+                    <p>Manage your alerts and updates</p>
+                </div>
+                <span>›</span>
+            </div>
+
+            <div class="profile-item" onclick="show('settings')">
+                <div class="profile-icon">⚙️</div>
+                <div>
+                    <h3>Settings</h3>
+                    <p>Theme, language and preferences</p>
+                </div>
+                <span>›</span>
+            </div>
+
+            <div class="profile-item" onclick="alert('Help & Support')">
+                <div class="profile-icon">❓</div>
+                <div>
+                    <h3>Help & Support</h3>
+                    <p>Get help with StockNest</p>
+                </div>
+                <span>›</span>
+            </div>
+
+            <div class="profile-item logout" onclick="show('welcome')">
+                <div class="profile-icon">🚪</div>
+                <div>
+                    <h3>Logout</h3>
+                    <p>Sign out of your account</p>
+                </div>
+                <span>›</span>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="bottom">
+        <button class="nav" onclick="show('home')"><span>🏠</span>Home</button>
+        <button class="nav" onclick="show('search')"><span>🔍</span>Search</button>
+        <button class="nav" onclick="show('portfolio')"><span>💼</span>Portfolio</button>
+        <button class="nav" onclick="show('watchlist')"><span>⭐</span>Watchlist</button>
+        <button class="nav" onclick="show('profile')"><span>👤</span>Profile</button>
+    </div>
+
+</div>
+
+
+<!-- ================= SCREEN 10 ================= -->
+
+<div id="settings" class="screen">
+
+    <div class="container">
+
+        <button class="back" onclick="show('profile')">
+            ← Back to Profile
+        </button>
+
+        <h2>Settings</h2>
+        <p style="margin-bottom:20px;">Manage your StockNest preferences.</p>
+
+        <div class="card">
+            <div class="profile-item" onclick="alert('Notifications are enabled')">
+                <div class="profile-icon">🔔</div>
+                <div>
+                    <h3>Notifications</h3>
+                    <p>Receive market and portfolio alerts</p>
+                </div>
+                <span>›</span>
+            </div>
+
+            <div class="profile-item" onclick="toggleTheme()">
+                <div class="profile-icon">🌙</div>
+                <div>
+                    <h3>Theme</h3>
+                    <p id="themeText">Light Mode</p>
+                </div>
+                <span>›</span>
+            </div>
+
+            <div class="profile-item" onclick="alert('Language: English')">
+                <div class="profile-icon">🌐</div>
+                <div>
+                    <h3>Language</h3>
+                    <p>English</p>
+                </div>
+                <span>›</span>
+            </div>
+
+            <div class="profile-item" onclick="alert('Privacy & Security')">
+                <div class="profile-icon">🔒</div>
+                <div>
+                    <h3>Privacy & Security</h3>
+                    <p>Manage account security</p>
+                </div>
+                <span>›</span>
+            </div>
+
+            <div class="profile-item" onclick="alert('Help & Support')">
+                <div class="profile-icon">❓</div>
+                <div>
+                    <h3>Help & Support</h3>
+                    <p>Contact StockNest support</p>
+                </div>
+                <span>›</span>
+            </div>
+        </div>
+
+        <div class="card" style="text-align:center;">
+            <p>StockNest</p>
+            <p style="margin-top:5px;">Version 1.0 • Demo App</p>
+        </div>
+
+    </div>
+
+    <div class="bottom">
+        <button class="nav" onclick="show('home')"><span>🏠</span>Home</button>
+        <button class="nav" onclick="show('search')"><span>🔍</span>Search</button>
+        <button class="nav" onclick="show('portfolio')"><span>💼</span>Portfolio</button>
+        <button class="nav" onclick="show('watchlist')"><span>⭐</span>Watchlist</button>
+        <button class="nav" onclick="show('profile')"><span>👤</span>Profile</button>
+    </div>
+
+</div>
+
+
+<!-- ================= SCREEN 11 ================= -->
+
+<div id="search" class="screen">
+
+    <div class="container">
+
+        <button class="back" onclick="show('home')">
+            ← Back to Home
+        </button>
+
+        <h2>Search Markets</h2>
+        <p>Find stocks and companies in StockNest.</p>
+
+        <div class="search-box">
+            <span class="search-icon">🔍</span>
+            <input id="stockSearch" type="text"
+                   placeholder="Search stocks or companies..."
+                   onkeyup="filterStocks()">
+        </div>
+
+        <div id="searchResults">
+
+            <div class="card search-result" data-name="reliance industries reliance">
+                <div class="search-left" onclick="openStock('Reliance Industries')">
+                    <div class="stock-logo">R</div>
+                    <div class="search-info">
+                        <h3>Reliance Industries</h3>
+                        <p>RELIANCE</p>
+                    </div>
+                </div>
+                <div class="search-result-price">
+                    <strong>₹1,428.50</strong>
+                    <span class="positive">+1.24%</span>
+                </div>
+            </div>
+
+            <div class="card search-result" data-name="tata motors tatamotors">
+                <div class="search-left" onclick="openStock('Tata Motors')">
+                    <div class="stock-logo">T</div>
+                    <div class="search-info">
+                        <h3>Tata Motors</h3>
+                        <p>TATAMOTORS</p>
+                    </div>
+                </div>
+                <div class="search-result-price">
+                    <strong>₹982.40</strong>
+                    <span class="positive">+2.10%</span>
+                </div>
+            </div>
+
+            <div class="card search-result" data-name="infosys infy">
+                <div class="search-left" onclick="openStock('Infosys')">
+                    <div class="stock-logo">I</div>
+                    <div class="search-info">
+                        <h3>Infosys</h3>
+                        <p>INFY</p>
+                    </div>
+                </div>
+                <div class="search-result-price">
+                    <strong>₹1,455.80</strong>
+                    <span class="negative">-0.60%</span>
+                </div>
+            </div>
+
+            <div class="card search-result" data-name="tcs tata consultancy services">
+                <div class="search-left" onclick="openStock('TCS')">
+                    <div class="stock-logo">T</div>
+                    <div class="search-info">
+                        <h3>TCS</h3>
+                        <p>TCS</p>
+                    </div>
+                </div>
+                <div class="search-result-price">
+                    <strong>₹3,912.20</strong>
+                    <span class="positive">+0.91%</span>
+                </div>
+            </div>
+
+        </div>
+
+        <div id="noResults" class="card center" style="display:none;">
+            <h3>No stocks found</h3>
+            <p style="margin-top:8px;">Try another stock name or symbol.</p>
+        </div>
+
+    </div>
+
+    <div class="bottom">
+        <button class="nav" onclick="show('home')"><span>🏠</span>Home</button>
+        <button class="nav" onclick="show('search')"><span>🔍</span>Search</button>
+        <button class="nav" onclick="show('portfolio')"><span>💼</span>Portfolio</button>
+        <button class="nav" onclick="show('watchlist')"><span>⭐</span>Watchlist</button>
+        <button class="nav" onclick="show('profile')"><span>👤</span>Profile</button>
+    </div>
+
+</div>
+
+<!-- ================= SCREEN 12 ================= -->
+<div id="forgot" class="screen">
+    <div class="container">
+        <button class="back" onclick="show('login')">
+            ← Back to Login
+        </button>
+
+        <div class="forgot-box">
+            <div class="forgot-icon">🔐</div>
+            <h2 class="center">Forgot Password?</h2>
+            <p class="forgot-note">
+                Enter your registered email or mobile number and we will send you an OTP to reset your password.
+            </p>
+
+            <div class="card">
+                <label>Email or Mobile Number</label>
+                <input id="resetContact" type="text" placeholder="Enter email or mobile number">
+                <button class="primary" onclick="sendResetOTP()">Send OTP</button>
+            </div>
+
+            <p class="center" style="margin-top:20px;">
+                Remember your password?
+                <button class="link" onclick="show('login')">Login</button>
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- ================= JAVASCRIPT ================= -->
+
+<script>
+
+function show(screenName) {
+
+    var screens = document.getElementsByClassName("screen");
+
+    for (var i = 0; i < screens.length; i++) {
+        screens[i].classList.remove("active");
+    }
+
+    document.getElementById(screenName).classList.add("active");
+
+    window.scrollTo(0, 0);
+}
+
+
+function filterStocks() {
+
+    var input = document.getElementById("stockSearch").value.toLowerCase();
+    var results = document.querySelectorAll("#searchResults .search-result");
+    var found = 0;
+
+    for (var i = 0; i < results.length; i++) {
+        var name = results[i].getAttribute("data-name");
+
+        if (name.indexOf(input) !== -1) {
+            results[i].style.display = "flex";
+            found++;
+        } else {
+            results[i].style.display = "none";
+        }
+    }
+
+    document.getElementById("noResults").style.display =
+        found === 0 ? "block" : "none";
+}
+
+
+function sendResetOTP() {
+    var contact = document.getElementById("resetContact").value.trim();
+
+    if (contact === "") {
+        alert("Please enter your email or mobile number.");
+        return;
+    }
+
+    alert("OTP sent successfully! (Demo)");
+}
+
+function login() {
+
+    var email = document.getElementById("email").value;
+    var password = document.getElementById("password").value;
+
+    if (email === "" || password === "") {
+        alert("Please enter email/mobile and password.");
+        return;
+    }
+
+    alert("Login successful!");
+
+    show("home");
+}
+
+
+function signup() {
+
+    var name = document.getElementById("name").value;
+    var email = document.getElementById("signupEmail").value;
+    var password = document.getElementById("signupPassword").value;
+    var confirm = document.getElementById("confirm").value;
+
+    if (
+        name === "" ||
+        email === "" ||
+        password === "" ||
+        confirm === ""
+    ) {
+        alert("Please fill all fields.");
+        return;
+    }
+
+    if (password !== confirm) {
+        alert("Passwords do not match.");
+        return;
+    }
+
+    alert("Account created successfully!");
+
+    show("login");
+}
+
+
+function openStock(name) {
+
+    var data = {
+
+        "Reliance Industries": [
+            "Reliance Industries",
+            "RELIANCE",
+            "₹1,428.50",
+            "+₹17.50 (+1.24%)",
+            "R"
+        ],
+
+        "Tata Motors": [
+            "Tata Motors",
+            "TATAMOTORS",
+            "₹982.40",
+            "+₹20.20 (+2.10%)",
+            "T"
+        ],
+
+        "Infosys": [
+            "Infosys",
+            "INFY",
+            "₹1,455.80",
+            "-₹8.80 (-0.60%)",
+            "I"
+        ],
+
+        "TCS": [
+            "TCS",
+            "TCS",
+            "₹3,912.20",
+            "+₹35.20 (+0.91%)",
+            "T"
+        ]
+
+    };
+
+    var stock = data[name];
+
+    document.getElementById("stockName").innerText = stock[0];
+    document.getElementById("stockSymbol").innerText = stock[1];
+    document.getElementById("stockPrice").innerText = stock[2];
+    document.getElementById("stockChange").innerText = stock[3];
+    document.getElementById("stockLogo").innerText = stock[4];
+
+    show("details");
+}
+
+
+function period(button) {
+
+    var buttons = document.querySelectorAll(".periods button");
+
+    for (var i = 0; i < buttons.length; i++) {
+        buttons[i].classList.remove("selected");
+    }
+
+    button.classList.add("selected");
+
+    alert("Chart period changed to " + button.innerText);
+}
+
+
+function category(button) {
+
+    var buttons = document.querySelectorAll(".category");
+
+    for (var i = 0; i < buttons.length; i++) {
+        buttons[i].classList.remove("selected");
+    }
+
+    button.classList.add("selected");
+
+    alert("Showing " + button.innerText + " news.");
+}
+
+
+
+function toggleTheme() {
+    document.body.classList.toggle('dark-mode');
+    var text = document.getElementById('themeText');
+    text.innerText = document.body.classList.contains('dark-mode') ? 'Dark Mode' : 'Light Mode';
+}
+
+</script>
+
+</body>
+</html>
